@@ -30,3 +30,5 @@ pandas
 sentence_transformers
 rerankers
 nltk
+ebooklib
+beautifulsoup4

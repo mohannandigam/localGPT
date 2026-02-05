@@ -26,6 +26,8 @@ pandas
 sentence_transformers
 rerankers
 nltk
+ebooklib
+beautifulsoup4
 # Standard library modules (no need to install)
 # asyncio, logging, json, os, sys, typing, threading, itertools, math, re
 # ocrmac - removed for Docker compatibility (macOS-specific) 

@@ -8,14 +8,15 @@ from typing import List, Dict, Any
 import PyPDF2
 from io import BytesIO
 import sqlite3
-from datetime import datetime
-
+from datetime import datetimeimport ebooklib
+from ebooklib import epub
+from bs4 import BeautifulSoup
 class SimplePDFProcessor:
     def __init__(self, db_path: str = "chat_data.db"):
-        """Initialize simple PDF processor with SQLite storage"""
+        """Initialize simple document processor (supports PDF and EPUB) with SQLite storage"""
         self.db_path = db_path
         self.init_database()
-        print("✅ Simple PDF processor initialized")
+        print("✅ Simple document processor initialized (PDF and EPUB support)")
     
     def init_database(self):
         """Initialize SQLite database for storing PDF content"""
@@ -63,16 +64,74 @@ class SimplePDFProcessor:
             print(f"❌ Error type: {type(e).__name__}")
             return ""
     
+    def extract_text_from_epub(self, epub_bytes: bytes) -> str:
+        """Extract text from EPUB bytes"""
+        try:
+            print(f"📚 Starting EPUB text extraction ({len(epub_bytes)} bytes)")
+            epub_file = BytesIO(epub_bytes)
+            book = epub.read_epub(epub_file)
+            
+            # Extract metadata
+            title = book.get_metadata('DC', 'title')
+            author = book.get_metadata('DC', 'creator')
+            
+            title_str = title[0][0] if title else "Unknown"
+            author_str = author[0][0] if author else "Unknown"
+            
+            print(f"📖 EPUB Title: {title_str}")
+            print(f"✍️  Author: {author_str}")
+            
+            # Build text content with metadata header
+            text_parts = []
+            text_parts.append(f"Title: {title_str}\n")
+            text_parts.append(f"Author: {author_str}\n\n")
+            text_parts.append("=" * 50 + "\n\n")
+            
+            # Extract text from all items in the book
+            for item in book.get_items():
+                if item.get_type() == ebooklib.ITEM_DOCUMENT:
+                    # Parse HTML content
+                    soup = BeautifulSoup(item.get_content(), 'html.parser')
+                    
+                    # Remove script and style elements
+                    for script in soup(["script", "style"]):
+                        script.decompose()
+                    
+                    # Get text content
+                    item_text = soup.get_text()
+                    
+                    # Clean up whitespace
+                    lines = (line.strip() for line in item_text.splitlines())
+                    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+                    item_text = '\n'.join(chunk for chunk in chunks if chunk)
+                    
+                    if item_text.strip():
+                        text_parts.append(item_text + "\n\n")
+            
+            text = ''.join(text_parts)
+            print(f"📚 Total extracted text: {len(text)} characters")
+            return text.strip()
+            
+        except Exception as e:
+            print(f"❌ Error extracting text from EPUB: {str(e)}")
+            print(f"❌ Error type: {type(e).__name__}")
+            return ""
+    
     def process_pdf(self, pdf_bytes: bytes, filename: str, session_id: str) -> Dict[str, Any]:
-        """Process a PDF file and store in database"""
-        print(f"📄 Processing PDF: {filename}")
+        """Process a PDF or EPUB file and store in database"""
+        print(f"📄 Processing document: {filename}")
         
-        # Extract text
-        text = self.extract_text_from_pdf(pdf_bytes)
+        # Determine file type and extract text
+        file_ext = filename.lower().split('.')[-1]
+        if file_ext == 'epub':
+            text = self.extract_text_from_epub(pdf_bytes)
+        else:  # Default to PDF
+            text = self.extract_text_from_pdf(pdf_bytes)
+        
         if not text:
             return {
                 "success": False,
-                "error": "Could not extract text from PDF",
+                "error": f"Could not extract text from {file_ext.upper()}",
                 "filename": filename
             }
         

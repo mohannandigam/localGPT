@@ -220,15 +220,20 @@ def run_indexing(docs_path: str, config_mode: str = "default"):
     # Get the appropriate indexing pipeline from the factory
     indexing_pipeline = IndexingPipeline(PIPELINE_CONFIGS[config_mode])
     
-    # Find all PDF files in the directory
-    pdf_files = [os.path.join(docs_path, f) for f in os.listdir(docs_path) if f.endswith(".pdf")]
+    # Find all supported document files in the directory (PDF and EPUB)
+    doc_files = [
+        os.path.join(docs_path, f) 
+        for f in os.listdir(docs_path) 
+        if f.endswith((".pdf", ".epub"))
+    ]
     
-    if not pdf_files:
-        print("No PDF files found to index.")
+    if not doc_files:
+        print("No PDF or EPUB files found to index.")
         return
 
+    print(f"Found {len(doc_files)} document(s) to index.")
     # Process all documents through the pipeline
-    indexing_pipeline.process_documents(pdf_files)
+    indexing_pipeline.process_documents(doc_files)
     print("✅ Indexing complete.")
 
 def run_chat(query: str):

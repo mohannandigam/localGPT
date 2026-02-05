@@ -33,10 +33,11 @@ More than a traditional RAG (Retrieval-Augmented Generation) tool, LocalGPT feat
 The architecture is **modular and lightweight**—enable only the components you need. With a pure-Python core and minimal dependencies, LocalGPT is simple to deploy, run, and maintain on any infrastructure.The system has minimal dependencies on frameworks and libraries, making it easy to deploy and maintain. The RAG system is pure python and does not require any additional dependencies.
 
 ## ▶️ Video
-Watch this [video](https://youtu.be/JTbtGH3secI) to get started with LocalGPT. 
 
-| Home | Create Index | Chat |
-|------|--------------|------|
+Watch this [video](https://youtu.be/JTbtGH3secI) to get started with LocalGPT.
+
+| Home                               | Create Index                                   | Chat                                              |
+| ---------------------------------- | ---------------------------------------------- | ------------------------------------------------- |
 | ![](Documentation/images/Home.png) | ![](Documentation/images/Index%20Creation.png) | ![](Documentation/images/Retrieval%20Process.png) |
 
 ## ✨ Features
@@ -50,11 +51,13 @@ Watch this [video](https://youtu.be/JTbtGH3secI) to get started with LocalGPT.
 - **GPU, CPU, HPU & MPS Support**: Supports multiple platforms out of the box, Chat with your data using `CUDA`, `CPU`, `HPU (Intel® Gaudi®)` or `MPS` and more!
 
 ### 📖 Document Processing
-- **Multi-format Support**: PDF, DOCX, TXT, Markdown, and more (Currently only PDF is supported)
+
+- **Multi-format Support**: PDF, DOCX, EPUB, TXT, HTML, Markdown, and more
 - **Contextual Enrichment**: Enhanced document understanding with AI-generated context, inspired by [Contextual Retrieval](https://www.anthropic.com/news/contextual-retrieval)
 - **Batch Processing**: Handle multiple documents simultaneously
 
 ### 🤖 AI-Powered Chat
+
 - **Natural Language Queries**: Ask questions in plain English
 - **Source Attribution**: Every answer includes document references
 - **Smart Routing**: Automatically chooses between RAG and direct LLM responses
@@ -64,14 +67,15 @@ Watch this [video](https://youtu.be/JTbtGH3secI) to get started with LocalGPT.
 - **Answer Verification**: Independent verification pass for accuracy
 - **Multiple AI Models**: Ollama for inference, HuggingFace for embeddings and reranking
 
-
 ### 🛠️ Developer-Friendly
+
 - **RESTful APIs**: Complete API access for integration
 - **Real-time Progress**: Live updates during document processing
 - **Flexible Configuration**: Customize models, chunk sizes, and search parameters
 - **Extensible Architecture**: Plugin system for custom components
 
 ### 🎨 Modern Interface
+
 - **Intuitive Web UI**: Clean, responsive design
 - **Session Management**: Organize conversations by topic
 - **Index Management**: Easy document collection management
@@ -81,16 +85,18 @@ Watch this [video](https://youtu.be/JTbtGH3secI) to get started with LocalGPT.
 
 ## 🚀 Quick Start
 
-Note: The installation is currently only tested on macOS. 
+Note: The installation is currently only tested on macOS.
 
 ### Prerequisites
+
 - Python 3.8 or higher (tested with Python 3.11.5)
 - Node.js 16+ and npm (tested with Node.js 23.10.0, npm 10.9.2)
 - Docker (optional, for containerized deployment)
 - 8GB+ RAM (16GB+ recommended)
 - Ollama (required for both deployment approaches)
 
-### ***NOTE***
+### **_NOTE_**
+
 Before this brach is moved to the main branch, please clone this branch for instalation:
 
 ```bash
@@ -98,7 +104,7 @@ git clone -b localgpt-v2 https://github.com/PromtEngineer/localGPT.git
 cd localGPT
 ```
 
-### Option 1: Docker Deployment 
+### Option 1: Docker Deployment
 
 ```bash
 # Clone the repository
@@ -121,6 +127,7 @@ open http://localhost:3000
 ```
 
 **Docker Management Commands:**
+
 ```bash
 # Check container status
 docker compose ps
@@ -167,6 +174,7 @@ open http://localhost:3000
 ```
 
 **System Management:**
+
 ```bash
 # Check system health (comprehensive diagnostics)
 python system_health_check.py
@@ -190,6 +198,7 @@ python run_system.py --stop
 
 **Service Architecture:**
 The `run_system.py` launcher manages four key services:
+
 - **Ollama Server** (port 11434): AI model serving
 - **RAG API Server** (port 8001): Document processing and retrieval
 - **Backend Server** (port 8000): Session management and API endpoints
@@ -220,17 +229,20 @@ npm run dev
 #### 1. Install System Dependencies
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt update
 sudo apt install python3.8 python3-pip nodejs npm docker.io docker-compose
 ```
 
 **macOS:**
+
 ```bash
 brew install python@3.8 node npm docker docker-compose
 ```
 
 **Windows:**
+
 ```bash
 # Install Python 3.8+, Node.js, and Docker Desktop
 # Then use PowerShell or WSL2
@@ -239,6 +251,7 @@ brew install python@3.8 node npm docker docker-compose
 #### 2. Install AI Models
 
 **Install Ollama (Recommended):**
+
 ```bash
 # Install Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
@@ -259,6 +272,7 @@ nano .env
 ```
 
 **Key Configuration Options:**
+
 ```env
 # AI Models (referenced in rag_system/main.py)
 OLLAMA_HOST=http://localhost:11434
@@ -304,13 +318,15 @@ python run_system.py --health
 An **index** is a collection of processed documents that you can chat with.
 
 #### Using the Web Interface:
+
 1. Open http://localhost:3000
 2. Click "Create New Index"
-3. Upload your documents (PDF, DOCX, TXT)
+3. Upload your documents (PDF, DOCX, EPUB, TXT, HTML, Markdown)
 4. Configure processing options
 5. Click "Build Index"
 
 #### Using Scripts:
+
 ```bash
 # Simple script approach
 ./simple_create_index.sh "My Documents" "path/to/document.pdf"
@@ -320,6 +336,7 @@ python create_index_script.py
 ```
 
 #### Using API:
+
 ```bash
 # Create index
 curl -X POST http://localhost:8000/indexes \
@@ -346,6 +363,7 @@ Once your index is built:
 ### 3. Advanced Features
 
 #### Custom Model Configuration
+
 ```bash
 # Use different models for different tasks
 curl -X POST http://localhost:8000/sessions \
@@ -358,12 +376,14 @@ curl -X POST http://localhost:8000/sessions \
 ```
 
 #### Batch Document Processing
+
 ```bash
 # Process multiple documents at once
 python demo_batch_indexing.py --config batch_indexing_config.json
 ```
 
 #### API Integration
+
 ```python
 import requests
 
@@ -387,6 +407,7 @@ print(response.json()['response'])
 LocalGPT supports multiple AI model providers with centralized configuration:
 
 #### Ollama Models (Local Inference)
+
 ```python
 OLLAMA_CONFIG = {
     "host": "http://localhost:11434",
@@ -396,6 +417,7 @@ OLLAMA_CONFIG = {
 ```
 
 #### External Models (HuggingFace Direct)
+
 ```python
 EXTERNAL_MODELS = {
     "embedding_model": "Qwen/Qwen3-Embedding-0.6B",           # 1024 dimensions
@@ -409,6 +431,7 @@ EXTERNAL_MODELS = {
 LocalGPT offers two main pipeline configurations:
 
 #### Default Pipeline (Production-Ready)
+
 ```python
 "default": {
     "description": "Production-ready pipeline with hybrid search, AI reranking, and verification",
@@ -439,6 +462,7 @@ LocalGPT offers two main pipeline configurations:
 ```
 
 #### Fast Pipeline (Speed-Optimized)
+
 ```python
 "fast": {
     "description": "Speed-optimized pipeline with minimal overhead",
@@ -466,6 +490,7 @@ SEARCH_CONFIG = {
     }
 }
 ```
+
 ---
 
 ## 🛠️ Troubleshooting
@@ -473,6 +498,7 @@ SEARCH_CONFIG = {
 ### Common Issues
 
 #### Installation Problems
+
 ```bash
 # Check Python version
 python --version  # Should be 3.8+
@@ -485,6 +511,7 @@ pip install -r requirements.txt --force-reinstall
 ```
 
 #### Model Loading Issues
+
 ```bash
 # Check Ollama status
 ollama list
@@ -495,6 +522,7 @@ ollama pull qwen3:0.6b
 ```
 
 #### Database Issues
+
 ```bash
 # Check database connectivity
 python -c "from backend.database import ChatDatabase; db = ChatDatabase(); print('✅ Database OK')"
@@ -505,6 +533,7 @@ python -c "from backend.database import ChatDatabase; ChatDatabase().init_databa
 ```
 
 #### Performance Issues
+
 ```bash
 # Check system resources
 python system_health_check.py
@@ -526,6 +555,7 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
    - `logs/frontend.log`: Frontend build and runtime logs
 
 2. **System Health**: Run comprehensive diagnostics:
+
    ```bash
    python system_health_check.py  # Full system diagnostics
    python run_system.py --health  # Service status check
@@ -547,6 +577,7 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
 ### Core Endpoints
 
 #### Chat API
+
 ```http
 # Session-based chat (recommended)
 POST /sessions/{session_id}/chat
@@ -573,6 +604,7 @@ Content-Type: application/json
 ```
 
 #### Index Management
+
 ```http
 # Create index
 POST /indexes
@@ -608,6 +640,7 @@ DELETE /indexes/{id}
 ```
 
 #### Session Management
+
 ```http
 # Create session
 POST /sessions
@@ -646,7 +679,9 @@ Content-Type: application/json
 ### Advanced Features
 
 #### Query Decomposition
+
 The system can break complex queries into sub-questions for better answers:
+
 ```http
 POST /sessions/{session_id}/chat
 Content-Type: application/json
@@ -659,7 +694,9 @@ Content-Type: application/json
 ```
 
 #### Answer Verification
+
 Independent verification pass for accuracy using a separate verification model:
+
 ```http
 POST /sessions/{session_id}/chat
 Content-Type: application/json
@@ -671,7 +708,9 @@ Content-Type: application/json
 ```
 
 #### Contextual Enrichment
+
 Document context enrichment during indexing for better understanding:
+
 ```bash
 # Enable during index building
 POST /indexes/{id}/build
@@ -682,13 +721,16 @@ POST /indexes/{id}/build
 ```
 
 #### Late Chunking
+
 Better context preservation by chunking after embedding:
+
 ```bash
 # Configure in pipeline
 "late_chunking": {"enabled": true}
 ```
 
 #### Streaming Chat
+
 ```http
 POST /chat/stream
 Content-Type: application/json
@@ -701,6 +743,7 @@ Content-Type: application/json
 ```
 
 #### Batch Processing
+
 ```bash
 # Using the batch indexing script
 python demo_batch_indexing.py --config batch_indexing_config.json
@@ -861,6 +904,7 @@ python run_system.py --mode dev
 ### 📖 Detailed Guidelines
 
 For comprehensive contributing guidelines, including:
+
 - Development setup and workflow
 - Coding standards and best practices
 - Testing requirements
@@ -883,6 +927,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Issues**: [GitHub Issues](https://github.com/PromtEngineer/localGPT/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/PromtEngineer/localGPT/discussions)
 - **Business Deployment and Customization**: [Contact Us](https://tally.so/r/wv6R2d)
+
 ---
 
 <div align="center">

@@ -4,6 +4,9 @@ from docling.datamodel.pipeline_options import PdfPipelineOptions, OcrMacOptions
 from docling.datamodel.base_models import InputFormat
 import fitz  # PyMuPDF for quick text inspection
 import os
+import ebooklib
+from ebooklib import epub
+from bs4 import BeautifulSoup
 
 class DocumentConverter:
     """
@@ -19,6 +22,7 @@ class DocumentConverter:
         '.htm': InputFormat.HTML,
         '.md': InputFormat.MD,
         '.txt': 'TXT',  # Special handling for plain text files
+        '.epub': 'EPUB',  # Special handling for EPUB files
     }
     
     def __init__(self):
@@ -71,6 +75,8 @@ class DocumentConverter:
             return self._convert_pdf_to_markdown(file_path)
         elif input_format == 'TXT':
             return self._convert_txt_to_markdown(file_path)
+        elif input_format == 'EPUB':
+            return self._convert_epub_to_markdown(file_path)
         else:
             return self._convert_general_to_markdown(file_path, input_format)
     
@@ -108,6 +114,58 @@ class DocumentConverter:
             return [(markdown_content, metadata)]
         except Exception as e:
             print(f"Error processing TXT file {file_path}: {e}")
+            return []
+    
+    def _convert_epub_to_markdown(self, file_path: str) -> List[Tuple[str, Dict[str, Any]]]:
+        """Convert EPUB files to markdown by extracting HTML content."""
+        print(f"Converting {file_path} (EPUB) to Markdown...")
+        try:
+            book = epub.read_epub(file_path)
+            
+            # Extract metadata
+            title = book.get_metadata('DC', 'title')
+            author = book.get_metadata('DC', 'creator')
+            
+            title_str = title[0][0] if title else "Unknown"
+            author_str = author[0][0] if author else "Unknown"
+            
+            # Build markdown content with metadata header
+            markdown_parts = []
+            markdown_parts.append(f"# {title_str}\n")
+            markdown_parts.append(f"**Author:** {author_str}\n\n---\n\n")
+            
+            # Extract text from all items in the book
+            for item in book.get_items():
+                if item.get_type() == ebooklib.ITEM_DOCUMENT:
+                    # Parse HTML content
+                    soup = BeautifulSoup(item.get_content(), 'html.parser')
+                    
+                    # Remove script and style elements
+                    for script in soup(["script", "style"]):
+                        script.decompose()
+                    
+                    # Get text content
+                    text = soup.get_text()
+                    
+                    # Clean up whitespace
+                    lines = (line.strip() for line in text.splitlines())
+                    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+                    text = '\n'.join(chunk for chunk in chunks if chunk)
+                    
+                    if text.strip():
+                        markdown_parts.append(text + "\n\n")
+            
+            markdown_content = ''.join(markdown_parts)
+            metadata = {
+                "source": file_path,
+                "title": title_str,
+                "author": author_str
+            }
+            
+            print(f"Successfully converted {file_path} (EPUB) to Markdown. Title: {title_str}")
+            return [(markdown_content, metadata)]
+        except Exception as e:
+            print(f"Error processing EPUB file {file_path}: {e}")
             return []
     
     def _convert_general_to_markdown(self, file_path: str, input_format: InputFormat) -> List[Tuple[str, Dict[str, Any]]]:

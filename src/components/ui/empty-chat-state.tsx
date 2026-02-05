@@ -121,13 +121,15 @@ export function EmptyChatState({
                 file.type === 'text/html' ||
                 file.type === 'text/markdown' ||
                 file.type === 'text/plain' ||
+                file.type === 'application/epub+zip' ||
                 file.name.toLowerCase().endsWith('.pdf') ||
                 file.name.toLowerCase().endsWith('.docx') ||
                 file.name.toLowerCase().endsWith('.doc') ||
                 file.name.toLowerCase().endsWith('.html') ||
                 file.name.toLowerCase().endsWith('.htm') ||
                 file.name.toLowerCase().endsWith('.md') ||
-                file.name.toLowerCase().endsWith('.txt')) {
+                file.name.toLowerCase().endsWith('.txt') ||
+                file.name.toLowerCase().endsWith('.epub')) {
                 newFiles.push({
                     id: crypto.randomUUID(),
                     name: file.name,
@@ -231,7 +233,7 @@ export function EmptyChatState({
                     <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".pdf,.docx,.doc,.html,.htm,.md,.txt"
+                        accept=".pdf,.docx,.doc,.html,.htm,.md,.txt,.epub"
                         multiple
                         onChange={handleFileChange}
                         className="hidden"
